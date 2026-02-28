@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Eat Chocolate 🍫</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: radial-gradient(#2b160b, #120804);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: system-ui, sans-serif;
+}
+
+#controls {
+  margin-bottom: 18px;
+}
+
+button {
+  padding: 10px 16px;
+  margin: 0 6px;
+  border: none;
+  border-radius: 14px;
+  font-size: 14px;
+  cursor: pointer;
+  background: #f3d6a0;
+}
+
+#chocolate {
+  width: 220px;
+  height: 320px;
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.4s ease;
+  box-shadow:
+    inset -6px -6px 10px rgba(0,0,0,0.4),
+    inset 6px 6px 10px rgba(255,255,255,0.08),
+    0 25px 40px rgba(0,0,0,0.6);
+}
+
+.milk {
+  background: linear-gradient(135deg, #7a3f1e, #4a240f);
+}
+
+.dark {
+  background: linear-gradient(135deg, #3b1b0f, #1a0b06);
+}
+
+.square {
+  position: absolute;
+  width: 50%;
+  height: 25%;
+  border: 1px solid rgba(0,0,0,0.25);
+  box-sizing: border-box;
+}
+
+.bite {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle at top left,
+    #120804 45%, transparent 46%);
+}
+
+#hint {
+  margin-top: 14px;
+  color: #f3d6a0;
+  font-size: 14px;
+  opacity: 0.85;
+}
+</style>
+</head>
+
+<body>
+
+<div id="controls">
+  <button onclick="setType('milk')">Milk 🍫</button>
+  <button onclick="setType('dark')">Dark 🍫</button>
+</div>
+
+<div id="chocolate" class="milk"></div>
+<div id="hint">Tap to eat 🍫</div>
+
+<script>
+const chocolate = document.getElementById("chocolate");
+let bites = 0;
+
+// create chocolate grid
+for (let y = 0; y < 4; y++) {
+  for (let x = 0; x < 2; x++) {
+    const sq = document.createElement("div");
+    sq.className = "square";
+    sq.style.left = x * 50 + "%";
+    sq.style.top = y * 25 + "%";
+    chocolate.appendChild(sq);
+  }
+}
+
+function setType(type) {
+  chocolate.className = type;
+  resetChocolate();
+}
+
+function resetChocolate() {
+  bites = 0;
+  chocolate.innerHTML = "";
+  for (let y = 0; y < 4; y++) {
+    for (let x = 0; x < 2; x++) {
+      const sq = document.createElement("div");
+      sq.className = "square";
+      sq.style.left = x * 50 + "%";
+      sq.style.top = y * 25 + "%";
+      chocolate.appendChild(sq);
+    }
+  }
+  chocolate.style.opacity = "1";
+  document.getElementById("hint").textContent = "Tap to eat 🍫";
+}
+
+function vibrate() {
+  if (navigator.vibrate) {
+    navigator.vibrate(40);
+  }
+}
+
+function eat() {
+  if (bites >= 7) {
+    chocolate.style.opacity = "0";
+    document.getElementById("hint").textContent = "Finished 😋";
+    vibrate();
+    return;
+  }
+
+  chocolate.style.transform = "scale(0.96)";
+  setTimeout(() => chocolate.style.transform = "scale(1)", 100);
+
+  const bite = document.createElement("div");
+  bite.className = "bite";
+  bite.style.left = Math.random() * 150 + "px";
+  bite.style.top = Math.random() * 250 + "px";
+  chocolate.appendChild(bite);
+
+  vibrate();
+  bites++;
+}
+
+chocolate.addEventListener("click", eat);
+chocolate.addEventListener("touchstart", eat);
+</script>
+
+</body>
+</html>
